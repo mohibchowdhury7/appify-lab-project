@@ -1,37 +1,48 @@
-# Render Blueprint — Buddy Script NestJS API
-# Creates a Web Service from apps/api
-# Apply: Go to Render Dashboard → Blueprint → Connect repo → Deploy
-
 services:
   - type: web
     name: buddy-script-api
     runtime: node
     plan: free
-    rootDir: apps/api
-    buildCommand: pnpm install && pnpm --filter api build
-    startCommand: node dist/main.js
+
+    buildCommand: |
+      corepack enable
+      pnpm install --frozen-lockfile
+      pnpm --filter @buddy-script/api exec prisma migrate deploy
+      pnpm turbo build --filter=@buddy-script/api
+
+    startCommand: |
+      pnpm start:api
+
     envVars:
-      - key: PORT
-        value: "3000"
       - key: NODE_ENV
         value: production
+
       - key: DATABASE_URL
         sync: false
+
       - key: JWT_SECRET
         sync: false
+
       - key: JWT_REFRESH_SECRET
         sync: false
+
       - key: JWT_ACCESS_EXPIRES
         value: 15m
+
       - key: JWT_REFRESH_EXPIRES
         value: 7d
+
       - key: SUPABASE_URL
         sync: false
+
       - key: SUPABASE_ANON_KEY
         sync: false
+
       - key: SUPABASE_SERVICE_ROLE_KEY
         sync: false
+
       - key: STORAGE_BUCKET
         value: post-images
+
       - key: CORS_ORIGIN
         sync: false

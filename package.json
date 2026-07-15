@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
+    "start:api": "pnpm --filter @buddy-script/api start",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "codegen": "turbo codegen",
