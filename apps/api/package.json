@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "codegen": "pnpm prisma:generate",
+    "predev": "pnpm prisma:generate",
+    "prebuild": "pnpm prisma:generate",
+    "pretypecheck": "pnpm prisma:generate",
     "dev": "nest start --watch",
     "build": "nest build",
     "start": "node dist/main.js",
