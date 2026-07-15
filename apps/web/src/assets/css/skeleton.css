@@ -1,0 +1,73 @@
+/* Skeleton Loaders CSS */
+
+/* Base skeleton loader styles */
+._skeleton_loader {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.08) 25%,
+    rgba(0, 0, 0, 0.15) 50%,
+    rgba(0, 0, 0, 0.08) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+/* Skeleton variants */
+._skeleton_text {
+  border-radius: 2px;
+}
+
+._skeleton_circular {
+  border-radius: 50%;
+}
+
+._skeleton_rectangular {
+  border-radius: 0;
+}
+
+._skeleton_rounded {
+  border-radius: 8px;
+}
+
+/* Shimmer animation */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Post skeleton specific */
+._skeleton_post {
+  pointer-events: none;
+}
+
+/* Comment skeleton specific */
+._skeleton_comment {
+  pointer-events: none;
+}
+
+/* Button skeleton - small spinner */
+._skeleton_spinner {
+  display: inline-block;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  animation: skeleton-spin 0.8s linear infinite;
+}
+
+@keyframes skeleton-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Feed loading skeleton container */
+._skeleton_feed_container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

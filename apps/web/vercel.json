@@ -1,0 +1,8 @@
+{
+  "buildCommand": "pnpm install && pnpm --filter web codegen && pnpm --filter web build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "VITE_API_BASE_URL": "@vercel-env-production-url"
+  }
+}

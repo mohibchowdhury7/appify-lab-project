@@ -1,0 +1,298 @@
+{
+  "openapi": "3.0.0",
+  "info": { "title": "Buddy Script API", "version": "1.0" },
+  "servers": [{ "url": "http://localhost:3000" }],
+  "paths": {
+    "/api/health": {
+      "get": {
+        "tags": ["health"],
+        "operationId": "healthControllerCheck",
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "authControllerRegister",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegisterDto" } } }
+        },
+        "responses": {
+          "201": { "description": "User registered", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginResponseDto" } } } },
+          "409": { "description": "Email already registered" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "authControllerLogin",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginDto" } } }
+        },
+        "responses": {
+          "200": { "description": "Login successful", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginResponseDto" } } } },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "authControllerRefresh",
+        "responses": {
+          "200": { "description": "Tokens refreshed", "content": { "application/json": { "schema": { "type": "object", "properties": { "accessToken": { "type": "string" }, "user": { "$ref": "#/components/schemas/UserResponseDto" } } } } } },
+          "401": { "description": "Invalid or reused refresh token" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["auth"],
+        "operationId": "authControllerLogout",
+        "security": [{ "bearer": [] }],
+        "responses": { "200": { "description": "Logged out" } }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "operationId": "authControllerMe",
+        "security": [{ "bearer": [] }],
+        "responses": { "200": { "description": "Current user profile", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UserResponseDto" } } } } }
+      }
+    },
+    "/api/posts": {
+      "post": {
+        "tags": ["posts"],
+        "operationId": "postsControllerCreate",
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreatePostDto" } } }
+        },
+        "responses": {
+          "201": { "description": "Post created" },
+          "400": { "description": "At least text or image is required" }
+        }
+      }
+    },
+    "/api/posts/feed": {
+      "get": {
+        "tags": ["posts"],
+        "operationId": "postsControllerGetFeed",
+        "security": [{ "bearer": [] }],
+        "parameters": [
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Feed items with cursor" } }
+      }
+    },
+    "/api/posts/{id}": {
+      "get": {
+        "tags": ["posts"],
+        "operationId": "postsControllerGetPost",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Post details" }, "404": { "description": "Post not found" } }
+      },
+      "patch": {
+        "tags": ["posts"],
+        "operationId": "postsControllerUpdatePost",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UpdatePostDto" } } }
+        },
+        "responses": { "200": { "description": "Post updated" }, "403": { "description": "Not authorized" } }
+      },
+      "delete": {
+        "tags": ["posts"],
+        "operationId": "postsControllerDeletePost",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "Post deleted" }, "403": { "description": "Not authorized" } }
+      }
+    },
+    "/api/storage/upload-url": {
+      "post": {
+        "tags": ["storage"],
+        "operationId": "storageControllerCreateUploadUrl",
+        "security": [{ "bearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateUploadUrlDto" } } }
+        },
+        "responses": { "201": { "description": "Presigned URL generated" } }
+      }
+    },
+    "/api/posts/{id}/like": {
+      "post": {
+        "tags": ["likes"],
+        "operationId": "likesControllerTogglePostLike",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "201": { "description": "Like toggled" } }
+      }
+    },
+    "/api/posts/{id}/likes": {
+      "get": {
+        "tags": ["likes"],
+        "operationId": "likesControllerGetPostLikers",
+        "security": [{ "bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Likers list" } }
+      }
+    },
+    "/api/comments/{id}/like": {
+      "post": {
+        "tags": ["likes"],
+        "operationId": "likesControllerToggleCommentLike",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "201": { "description": "Like toggled" } }
+      }
+    },
+    "/api/comments/{id}/likes": {
+      "get": {
+        "tags": ["likes"],
+        "operationId": "likesControllerGetCommentLikers",
+        "security": [{ "bearer": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Likers list" } }
+      }
+    },
+    "/api/posts/{postId}/comments": {
+      "post": {
+        "tags": ["comments"],
+        "operationId": "commentsControllerCreateComment",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "postId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateCommentDto" } } }
+        },
+        "responses": { "201": { "description": "Comment created" } }
+      },
+      "get": {
+        "tags": ["comments"],
+        "operationId": "commentsControllerListComments",
+        "security": [{ "bearer": [] }],
+        "parameters": [
+          { "name": "postId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Comment list" } }
+      }
+    },
+    "/api/comments/{commentId}/replies": {
+      "post": {
+        "tags": ["comments"],
+        "operationId": "commentsControllerCreateReply",
+        "security": [{ "bearer": [] }],
+        "parameters": [{ "name": "commentId", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateCommentDto" } } }
+        },
+        "responses": { "201": { "description": "Reply created" }, "400": { "description": "Cannot reply to a reply" } }
+      },
+      "get": {
+        "tags": ["comments"],
+        "operationId": "commentsControllerListReplies",
+        "security": [{ "bearer": [] }],
+        "parameters": [
+          { "name": "commentId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "cursor", "in": "query", "schema": { "type": "string" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "Reply list" } }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearer": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email", "password"],
+        "properties": {
+          "firstName": { "type": "string", "maxLength": 50 },
+          "lastName": { "type": "string", "maxLength": 50 },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8, "maxLength": 128 }
+        }
+      },
+      "LoginDto": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        }
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "email": { "type": "string" },
+          "avatarUrl": { "type": "string", "nullable": true }
+        }
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "user": { "$ref": "#/components/schemas/UserResponseDto" }
+        }
+      },
+      "CreatePostDto": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "maxLength": 5000 },
+          "imageUrl": { "type": "string" },
+          "visibility": { "type": "string", "enum": ["PUBLIC", "PRIVATE"] }
+        }
+      },
+      "UpdatePostDto": {
+        "type": "object",
+        "properties": {
+          "text": { "type": "string", "maxLength": 5000 },
+          "visibility": { "type": "string", "enum": ["PUBLIC", "PRIVATE"] }
+        }
+      },
+      "CreateUploadUrlDto": {
+        "type": "object",
+        "required": ["filename", "contentType"],
+        "properties": {
+          "filename": { "type": "string" },
+          "contentType": { "type": "string" }
+        }
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "text": { "type": "string", "maxLength": 3000 }
+        }
+      }
+    }
+  }
+}

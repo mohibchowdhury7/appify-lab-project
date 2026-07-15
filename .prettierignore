@@ -1,0 +1,7 @@
+node_modules
+dist
+.turbo
+.vite
+coverage
+apps/web/src/api/generated
+pnpm-lock.yaml
