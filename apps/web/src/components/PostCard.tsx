@@ -7,7 +7,6 @@ import LikeButton from './LikeButton';
 import WhoLiked from './WhoLiked';
 import CommentComposer from './CommentComposer';
 import CommentList from './CommentList';
-import { useRealtimePost } from '../hooks/useRealtimeFeed';
 
 interface PostAuthor {
   id: string;
@@ -66,9 +65,6 @@ export default function PostCard({ post }: PostCardProps) {
   const [editText, setEditText] = useState(post.text || '');
   const [editVisibility, setEditVisibility] = useState(post.visibility);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  // Enable real-time updates for this post
-  useRealtimePost(post.id);
 
   const authorName = post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Unknown User';
   const avatarUrl = post.author?.avatarUrl || postImgDefault;
